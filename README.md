@@ -10,8 +10,6 @@ This repository contains a mac version of our video filter framework. Once clone
   
 # That's It!
 
-***Note: Windows and Linux machines can still display images with this framework, but can't use the webcam or videos***
-
 If you are wondering what the command `spctl --add <paste path here>/*` does, Here is your answer:
 
 The code above adds an exception to the macOS Security System that at default will not allow the `.dylib` and the `.so` files to run. Excecuting the command above will allow specifically the files inside the`lib` folder to run.
