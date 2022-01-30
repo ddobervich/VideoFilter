@@ -150,10 +150,10 @@ public class DisplayWindow extends PApplet {
             webcam = Webcam.getDefault();
 
             Dimension[] views = webcam.getViewSizes();
-            webcam.setViewSize(views[views.length-1]);  // set view size to largest supported
+            webcam.setViewSize(views[views.length - 1]);  // set view size to largest supported
 
-            this.displayHeight = (int)(webcam.getViewSize().getHeight());
-            this.displayWidth = (int)(webcam.getViewSize().getWidth());
+            this.displayHeight = (int) (webcam.getViewSize().getHeight());
+            this.displayWidth = (int) (webcam.getViewSize().getWidth());
             webcam.open();
         }
 
@@ -315,7 +315,11 @@ public class DisplayWindow extends PApplet {
 
     public void mouseReleased() {
         if (this.filter != null && this.filter instanceof Interactive) {
-            ((Interactive) filter).mouseClicked(getImageMouseX(currentDisplayFrame), getImageMouseY(currentDisplayFrame), currentDisplayFrame);
+            // TODO: should we provide the original frame or the filtered frame?  both?
+            //           ((Interactive) filter).mouseClicked(getImageMouseX(currentDisplayFrame), getImageMouseY(currentDisplayFrame), currentDisplayFrame);
+            if (frame != null) {
+                ((Interactive) filter).mouseClicked(getImageMouseX(frame), getImageMouseY(frame), frame);
+            }
         }
     }
 
@@ -323,7 +327,7 @@ public class DisplayWindow extends PApplet {
         String name = JOptionPane.showInputDialog("Type the name of your processImage class (without the .java)");
         PixelFilter f = null;
         try {
-            Class c = Class.forName("Filters."+name);
+            Class c = Class.forName("Filters." + name);
             f = (PixelFilter) c.newInstance();
         } catch (Exception e) {
             System.err.println("Something went wrong when instantiating your class!  (running its constructor). " +
@@ -336,11 +340,11 @@ public class DisplayWindow extends PApplet {
     }
 
     public static void showFor(String filePath) {
-        PApplet.main("core.DisplayWindow", new String[]{"filepath:"+filePath});
+        PApplet.main("core.DisplayWindow", new String[]{"filepath:" + filePath});
     }
 
     public static void showFor(String filePath, int width, int height) {
-        PApplet.main("core.DisplayWindow", new String[]{"filepath:"+filePath, "dimensions:"+width+"x"+height});
+        PApplet.main("core.DisplayWindow", new String[]{"filepath:" + filePath, "dimensions:" + width + "x" + height});
     }
 
     public static void getInputInteractively() {
@@ -348,7 +352,7 @@ public class DisplayWindow extends PApplet {
     }
 
     public static void getInputInteractively(int width, int height) {
-        PApplet.main("core.DisplayWindow", new String[]{"dimensions:"+width+"x"+height});
+        PApplet.main("core.DisplayWindow", new String[]{"dimensions:" + width + "x" + height});
     }
 }
 
