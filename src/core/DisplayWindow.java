@@ -12,6 +12,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Display class for working with image filters
@@ -41,6 +43,8 @@ public class DisplayWindow extends PApplet {
 
     private int initWidth = 900;
     private int initHeight = 800;
+
+    private static String DEFAULT_FILTER = "DoNothingFilter";
 
     public void settings() {
         initializeImageSource(args);
@@ -76,11 +80,13 @@ public class DisplayWindow extends PApplet {
                 sourcePath = args[0].substring(startIndex + "filepath:".length());
             }
         }
+
         if (sourcePath == null) {
             System.err.println("malformed image source path.  Format \"filepath:<the file path>\"");
             displayVideoSourceChoiceDialog();
             return;
         }
+
         this.inputImage = tryToLoadStillImage(sourcePath);
         source = IMAGE;
 
@@ -116,11 +122,14 @@ public class DisplayWindow extends PApplet {
 
     private String fileChooser() {
         String userDirLocation = System.getProperty("user.dir");
-        File userDir = new File(userDirLocation);
+        File userDir = new File(userDirLocation + "/images");
+
         JFileChooser fc = new JFileChooser(userDir);
         int returnVal = fc.showOpenDialog(null);
         File file = fc.getSelectedFile();
-        return file.getAbsolutePath();
+
+        if (file != null) return file.getAbsolutePath();
+        else return userDir.getAbsolutePath() + "/1.png";
     }
 
     private DImage tryToLoadStillImage(String moviePath) {
@@ -295,6 +304,9 @@ public class DisplayWindow extends PApplet {
         if (key == 's' || key == 'S') {
             currentlyViewingFilteredImage = !currentlyViewingFilteredImage;
         }
+        if (key == 'b' || key == 'B') {
+            displayVideoSourceChoiceDialog();
+        }
 
         if (key == 'p' || key == 'P') {
             paused = !paused;
@@ -324,10 +336,19 @@ public class DisplayWindow extends PApplet {
     }
 
     private PixelFilter loadNewFilter() {
-        String name = JOptionPane.showInputDialog("Type the name of your processImage class (without the .java)");
+        String userDirLocation = System.getProperty("user.dir");
+        File userDir = new File(userDirLocation + "/src/Filters");
+
+
+        String[] filters = new String[Objects.requireNonNull(userDir.list()).length];
+        for (int i = 0; i < filters.length; i++) {
+            filters[i] = Objects.requireNonNull(userDir.list())[i].replace(".java", "");
+        }
+        Object name = JOptionPane.showInputDialog(null, "Type the name of your processImage class (without the .java)", "Filter Selection", JOptionPane.QUESTION_MESSAGE, null, filters, DEFAULT_FILTER);
+
         PixelFilter f = null;
         try {
-            Class c = Class.forName("Filters." + name);
+            Class c = Class.forName("Filters." + name.toString());
             f = (PixelFilter) c.newInstance();
         } catch (Exception e) {
             System.err.println("Something went wrong when instantiating your class!  (running its constructor). " +
@@ -344,6 +365,11 @@ public class DisplayWindow extends PApplet {
     }
 
     public static void showFor(String filePath, int width, int height) {
+        PApplet.main("core.DisplayWindow", new String[]{"filepath:" + filePath, "dimensions:" + width + "x" + height});
+    }
+
+    public static void showFor(String filePath, int width, int height, String default_filter) {
+        DEFAULT_FILTER = default_filter;
         PApplet.main("core.DisplayWindow", new String[]{"filepath:" + filePath, "dimensions:" + width + "x" + height});
     }
 
