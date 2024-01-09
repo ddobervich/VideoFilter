@@ -48,7 +48,7 @@ public class DImage {
 
     public void setPixels(int[] pixels) {
         img.loadPixels();
-        img.pixels = pixels;    // TODO: does this work?
+        img.pixels = pixels.clone();    // TODO: does this work?
         img.updatePixels();
     }
 
