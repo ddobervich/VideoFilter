@@ -12,7 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -80,13 +79,11 @@ public class DisplayWindow extends PApplet {
                 sourcePath = args[0].substring(startIndex + "filepath:".length());
             }
         }
-
         if (sourcePath == null) {
             System.err.println("malformed image source path.  Format \"filepath:<the file path>\"");
             displayVideoSourceChoiceDialog();
             return;
         }
-
         this.inputImage = tryToLoadStillImage(sourcePath);
         source = IMAGE;
 
@@ -304,6 +301,7 @@ public class DisplayWindow extends PApplet {
         if (key == 's' || key == 'S') {
             currentlyViewingFilteredImage = !currentlyViewingFilteredImage;
         }
+
         if (key == 'b' || key == 'B') {
             displayVideoSourceChoiceDialog();
         }
