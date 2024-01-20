@@ -296,6 +296,9 @@ public class DisplayWindow extends PApplet {
     public void keyReleased() {
         if (key == 'f' || key == 'F') {
             this.filter = loadNewFilter();
+            System.out.println("Loaded new filter");
+            initiallyPaused = false;
+
         }
 
         if (key == 's' || key == 'S') {
@@ -337,12 +340,11 @@ public class DisplayWindow extends PApplet {
         String userDirLocation = System.getProperty("user.dir");
         File userDir = new File(userDirLocation + "/src/Filters");
 
-
         String[] filters = new String[Objects.requireNonNull(userDir.list()).length];
         for (int i = 0; i < filters.length; i++) {
             filters[i] = Objects.requireNonNull(userDir.list())[i].replace(".java", "");
         }
-        Object name = JOptionPane.showInputDialog(null, "Type the name of your processImage class (without the .java)", "Filter Selection", JOptionPane.QUESTION_MESSAGE, null, filters, DEFAULT_FILTER);
+        Object name = JOptionPane.showInputDialog(null, "Select your filter", "Filter Selection", JOptionPane.QUESTION_MESSAGE, null, filters, DEFAULT_FILTER);
 
         PixelFilter f = null;
         try {
