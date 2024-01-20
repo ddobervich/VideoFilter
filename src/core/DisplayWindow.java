@@ -64,6 +64,8 @@ public class DisplayWindow extends PApplet {
         size(initWidth, initHeight);
         centerX = width / 2;
         centerY = height / 2;
+
+        this.filter = loadNewFilter(DEFAULT_FILTER);
     }
 
     private void initializeImageSource(String[] args) {
@@ -295,7 +297,7 @@ public class DisplayWindow extends PApplet {
 
     public void keyReleased() {
         if (key == 'f' || key == 'F') {
-            this.filter = loadNewFilter();
+            this.filter = selectNewFilterDialog();
             System.out.println("Loaded new filter");
             initiallyPaused = false;
 
@@ -336,16 +338,7 @@ public class DisplayWindow extends PApplet {
         }
     }
 
-    private PixelFilter loadNewFilter() {
-        String userDirLocation = System.getProperty("user.dir");
-        File userDir = new File(userDirLocation + "/src/Filters");
-
-        String[] filters = new String[Objects.requireNonNull(userDir.list()).length];
-        for (int i = 0; i < filters.length; i++) {
-            filters[i] = Objects.requireNonNull(userDir.list())[i].replace(".java", "");
-        }
-        Object name = JOptionPane.showInputDialog(null, "Select your filter", "Filter Selection", JOptionPane.QUESTION_MESSAGE, null, filters, DEFAULT_FILTER);
-
+    private PixelFilter loadNewFilter(String name) {
         PixelFilter f = null;
         try {
             Class c = Class.forName("Filters." + name.toString());
@@ -356,8 +349,20 @@ public class DisplayWindow extends PApplet {
                     "no inputs!");
             System.err.println(e.getMessage());
         }
-
         return f;
+    }
+
+    private PixelFilter selectNewFilterDialog() {
+        String userDirLocation = System.getProperty("user.dir");
+        File userDir = new File(userDirLocation + "/src/Filters");
+
+        String[] filters = new String[Objects.requireNonNull(userDir.list()).length];
+        for (int i = 0; i < filters.length; i++) {
+            filters[i] = Objects.requireNonNull(userDir.list())[i].replace(".java", "");
+        }
+        Object name = JOptionPane.showInputDialog(null, "Select your filter", "Filter Selection", JOptionPane.QUESTION_MESSAGE, null, filters, DEFAULT_FILTER);
+
+        return loadNewFilter(name.toString());
     }
 
     public static void showFor(String filePath) {
