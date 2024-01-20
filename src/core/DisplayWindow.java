@@ -215,6 +215,8 @@ public class DisplayWindow extends PApplet {
 
         if (paused) {
             text("Press 'p' to unpause", 620, height - 22);
+        } else {
+            text("Press 'p' to pause", 620, height - 22);
         }
 
         stroke(200);
@@ -299,8 +301,7 @@ public class DisplayWindow extends PApplet {
         if (key == 'f' || key == 'F') {
             this.filter = selectNewFilterDialog();
             System.out.println("Loaded new filter");
-            initiallyPaused = false;
-
+            paused = false; // hack hack; can we just apply new filter to current frame instead of unpausing?
         }
 
         if (key == 's' || key == 'S') {
