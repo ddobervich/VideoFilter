@@ -170,18 +170,11 @@ public class DisplayWindow extends PApplet {
 
     public void draw() {
         background(200);
-        if (source == IMAGE) {
-            applyFilterToImage(inputImage.getPImage());
+        if (!paused) {
+            fetchImageAndApplyFilter();
         }
-        if (source == WEBCAM) {
-            if (webcam == null) return;
-            BufferedImage img = webcam.getImage();
-            if (img == null) return;
-            applyFilterToImage(new PImage(img));
-        }
-        if (frame == null) {
-            return;
-        }
+        if (frame == null) return;
+
         if (oldFilteredFrame == null) oldFilteredFrame = frame;
 
         DImage currentFiltered = (!loading && filteredFrame != null) ? filteredFrame : oldFilteredFrame;
@@ -230,6 +223,19 @@ public class DisplayWindow extends PApplet {
         }
     }
 
+    private void fetchImageAndApplyFilter() {
+        if (source == IMAGE) {
+            applyFilterToImage(inputImage.getPImage());
+        }
+        if (source == WEBCAM) {
+            if (webcam == null) return;
+            BufferedImage img = webcam.getImage();
+            if (img == null) return;
+            applyFilterToImage(new PImage(img));
+
+        }
+    }
+
     private String colorStringAt(int mouseX, int mouseY) {
         loadPixels();
         int c = pixels[mouseY * width + mouseX];
@@ -266,8 +272,6 @@ public class DisplayWindow extends PApplet {
     }
 
     public void applyFilterToImage(PImage img) {
-        if (paused) return;
-
         oldFilteredFrame = filteredFrame;
         loading = true;
 
@@ -293,14 +297,20 @@ public class DisplayWindow extends PApplet {
     }
 
     private DImage runFilters(DImage frameToFilter) {
-        if (filter != null) return filter.processImage(frameToFilter);
+        if (filter != null) {
+            DImage output = filter.processImage(frameToFilter);
+            if (output == null) {
+                System.err.println("Your filter has returned a null output.  Check your processImage method!");
+                System.exit(1);
+            }
+        }
         return frameToFilter;
     }
 
     public void keyReleased() {
         if (key == 'f' || key == 'F') {
             this.filter = selectNewFilterDialog();
-            System.out.println("Loaded new filter");
+            fetchImageAndApplyFilter();
             paused = false; // hack hack; can we just apply new filter to current frame instead of unpausing?
         }
 
