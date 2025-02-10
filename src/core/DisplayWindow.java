@@ -303,6 +303,7 @@ public class DisplayWindow extends PApplet {
                 System.err.println("Your filter has returned a null output.  Check your processImage method!");
                 System.exit(1);
             }
+            return output;
         }
         return frameToFilter;
     }
