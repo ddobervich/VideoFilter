@@ -297,14 +297,17 @@ public class DisplayWindow extends PApplet {
     }
 
     private DImage runFilters(DImage frameToFilter) {
-        if (filter != null) {
+        if (filter == null) {
+            System.err.println("Error: Your filter is null!  You haven't defined one to use...");
+            return filteredFrame;
+        } else {
             DImage output = filter.processImage(frameToFilter);
             if (output == null) {
                 System.err.println("Your filter has returned a null output.  Check your processImage method!");
                 System.exit(1);
             }
+            return output;
         }
-        return frameToFilter;
     }
 
     public void keyReleased() {
