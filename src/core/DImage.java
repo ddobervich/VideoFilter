@@ -4,6 +4,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +63,28 @@ public class DImage {
             width = img.width;
             height = img.height;
         }
+    }
+
+    /***
+     * Convert hsb color coordinates to rgb.  The values for hue, saturation and value must all be between 0 and 1.
+     * @param hsb
+     * @return
+     */
+    public static short[] HSBtoRGB(float[] hsb) {
+        int rgb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+        short[] rgbvals = new short[3];
+        rgbvals[0] = (short)((rgb >> 16) & 0xFF);
+        rgbvals[1] = (short)((rgb >> 8) & 0xFF);
+        rgbvals[2] = (short)(rgb & 0xFF);
+        return rgbvals;
+    }
+
+    public static float[] RGBtoHSB(short[] rgb) {
+        return RGBtoHSB(rgb[0], rgb[1], rgb[2]);
+    }
+
+    public static float[] RGBtoHSB(short r, short g, short b) {
+        return Color.RGBtoHSB(r, g, b, null);
     }
 
     public int[] getColorPixelArray() {
