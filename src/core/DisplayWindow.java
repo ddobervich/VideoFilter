@@ -116,6 +116,15 @@ public class DisplayWindow extends PApplet {
                 this.movie = new Movie(this, sourcePath);   // TODO: this is probably broken
                 this.source = VIDEO;
             }
+        } else if (webcam == null) {
+            webcam = Webcam.getDefault();
+
+            Dimension[] views = webcam.getViewSizes();
+            webcam.setViewSize(views[views.length - 1]);  // set view size to largest supported
+
+            this.displayHeight = (int) (webcam.getViewSize().getHeight());
+            this.displayWidth = (int) (webcam.getViewSize().getWidth());
+            webcam.open();
         }
     }
 
