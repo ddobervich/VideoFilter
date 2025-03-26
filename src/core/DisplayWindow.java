@@ -377,7 +377,7 @@ public class DisplayWindow extends PApplet {
             filters[i] = Objects.requireNonNull(userDir.list())[i].replace(".java", "");
         }
         Object name = JOptionPane.showInputDialog(null, "Select your filter", "Filter Selection", JOptionPane.QUESTION_MESSAGE, null, filters, DEFAULT_FILTER);
-
+        if (name == null) return this.filter;       // if they hit 'cancel' return the current filter.
         return loadNewFilter(name.toString());
     }
 

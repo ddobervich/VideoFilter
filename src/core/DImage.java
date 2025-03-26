@@ -1,6 +1,13 @@
 package core;
 
+import processing.core.PApplet;
 import processing.core.PImage;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 // TODO: comment this class
 
 public class DImage {
@@ -27,6 +34,57 @@ public class DImage {
         this.img.loadPixels();
         System.arraycopy(frame.getColorPixelArray(), 0, this.img.pixels, 0, this.img.pixels.length);
         this.img.updatePixels();
+    }
+
+    public DImage(String filename) {
+        try {
+            BufferedImage img = ImageIO.read(new File(filename));
+            if (img == null) {
+                System.out.println("Failed to load image");
+            }
+
+            PImage newImg = new PImage(img.getWidth(), img.getHeight(), PImage.RGB);
+
+            for (int y = 0; y < img.getHeight(); y++) {
+                for (int x = 0; x < img.getWidth(); x++) {
+                    int rgb = img.getRGB(x, y);
+                    newImg.pixels[y * img.getWidth() + x] = rgb;
+                }
+            }
+
+            newImg.updatePixels();
+
+            this.img = newImg;
+            this.width = newImg.width;
+            this.height = newImg.height;
+        } catch (IOException e) {
+            System.out.println("Error loading image: " + e.getMessage());
+            img = new PImage(100, 100);
+            width = img.width;
+            height = img.height;
+        }
+    }
+
+    /***
+     * Convert hsb color coordinates to rgb.  The values for hue, saturation and value must all be between 0 and 1.
+     * @param hsb
+     * @return
+     */
+    public static short[] HSBtoRGB(float[] hsb) {
+        int rgb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+        short[] rgbvals = new short[3];
+        rgbvals[0] = (short)((rgb >> 16) & 0xFF);
+        rgbvals[1] = (short)((rgb >> 8) & 0xFF);
+        rgbvals[2] = (short)(rgb & 0xFF);
+        return rgbvals;
+    }
+
+    public static float[] RGBtoHSB(short[] rgb) {
+        return RGBtoHSB(rgb[0], rgb[1], rgb[2]);
+    }
+
+    public static float[] RGBtoHSB(short r, short g, short b) {
+        return Color.RGBtoHSB(r, g, b, null);
     }
 
     public int[] getColorPixelArray() {
@@ -388,12 +446,28 @@ public class DImage {
         return DImage.getColorComponents2d(this.getColorPixelGrid());
     }
 
+    public short[][] copy(short[][] arr) {
+        if (arr == null) {
+            return null;
+        }
+
+        int height = arr.length;
+        int width = (height > 0) ? arr[0].length : 0;
+        short[][] copy = new short[height][width];
+
+        for (int i = 0; i < height; i++) {
+            System.arraycopy(arr[i], 0, copy[i], 0, width);
+        }
+
+        return copy;
+    }
+
     public short[][] getRedChannel() {
         if (channels == null) {
             this.channels = getColorChannels();
         }
 
-        return this.channels.red;
+        return copy(this.channels.red);
     }
 
     public short[][] getBlueChannel() {
@@ -401,7 +475,7 @@ public class DImage {
             this.channels = getColorChannels();
         }
 
-        return this.channels.blue;
+        return copy(this.channels.blue);
     }
 
     public short[][] getGreenChannel() {
@@ -409,7 +483,7 @@ public class DImage {
             this.channels = getColorChannels();
         }
 
-        return this.channels.green;
+        return copy(this.channels.green);
     }
 
     public short[][] getAlphaChannel() {
@@ -417,7 +491,7 @@ public class DImage {
             this.channels = getColorChannels();
         }
 
-        return this.channels.alpha;
+        return copy(this.channels.alpha);
     }
 
     public void setRedChannel(short[][] red) {
@@ -461,6 +535,7 @@ public class DImage {
         if (channels == null) {
             this.channels = getColorChannels();
         }
+
         this.channels.red = red;
         this.channels.green = green;
         this.channels.blue = blue;
