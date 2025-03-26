@@ -12,8 +12,9 @@ public interface Interactive {
      *
      * @param mouseX the x coordiante where the mouse was clicked ( with (0, 0) the upper left corner of img )
      * @param mouseY the y coordiante where the mouse was clicked (with (0, 0) the upper left corner of img )
-     * @param img the image unfiltered original image that was clicked.
+     * @param original the original unfiltered image that was clicked.
+     * @param filtered the output from running processImg on the original image.
      */
-    public void mouseClicked(int mouseX, int mouseY, DImage img);
+    public void mouseClicked(int mouseX, int mouseY, DImage original, DImage filtered);
     public void keyPressed(char key);
 }

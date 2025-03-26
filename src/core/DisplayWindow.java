@@ -290,7 +290,6 @@ public class DisplayWindow extends PApplet {
         m.read();
         frame = new DImage(m.get());
         filteredFrame = new DImage(frame);
-
         filteredFrame = runFilters(filteredFrame);
 
         loading = false;
@@ -346,8 +345,11 @@ public class DisplayWindow extends PApplet {
         if (this.filter != null && this.filter instanceof Interactive) {
             // TODO: should we provide the original frame or the filtered frame?  both?
             //           ((Interactive) filter).mouseClicked(getImageMouseX(currentDisplayFrame), getImageMouseY(currentDisplayFrame), currentDisplayFrame);
-            if (frame != null) {
-                ((Interactive) filter).mouseClicked(getImageMouseX(frame), getImageMouseY(frame), frame);
+            if (frame != null && filteredFrame != null) {
+                ((Interactive) filter).mouseClicked(getImageMouseX(frame), getImageMouseY(frame), frame, filteredFrame);
+            } else {
+                if (frame == null) System.err.println("Original frame is null!");
+                if (filteredFrame == null) System.err.println("Filtered frame is null!");
             }
         }
     }
